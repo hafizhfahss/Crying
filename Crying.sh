@@ -24,7 +24,7 @@ apk add --no-cache python3 py3-pip || {
 
 # Install required Python library
 echo "Installing PyCryptodome..."
-pip3 install pycryptodome || {
+pip3 install pycryptodome --break-system-packages || {
     echo "Failed to install PyCryptodome."
     exit 1
 }
