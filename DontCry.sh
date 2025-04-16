@@ -4,18 +4,39 @@
 FOLDER_TO_PUSH="/Crying"
 DESTINATION_FOLDER="/app/Crying"
 
-# Ensure necessary tools are available
-echo "Ensuring required tools are available..."
-apk update && apk add --no-cache curl bash || {
-    echo "Failed to install required tools."
-    exit 1
-}
+# Detect the operating system
+OS=$(cat /etc/os-release | grep "^ID=" | cut -d= -f2 | tr -d '"')
 
-# Install kubectl
-apk add --no-cache curl
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-chmod +x kubectl
-mv kubectl /usr/local/bin/
+# Ensure necessary tools are available based on OS
+echo "Validating server OS..."
+if [ "$OS" = "ubuntu" ]; then
+    echo "Server is Ubuntu. Installing required tools..."
+    apt-get update && apt-get install -y curl bash || {
+        echo "Failed to install required tools on Ubuntu."
+        exit 1
+    }
+
+    # Install kubectl on Ubuntu
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    mv kubectl /usr/local/bin/
+
+elif [ "$OS" = "alpine" ]; then
+    echo "Server is Alpine. Installing required tools..."
+    apk update && apk add --no-cache curl bash || {
+        echo "Failed to install required tools on Alpine."
+        exit 1
+    }
+
+    # Install kubectl on Alpine
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+    mv kubectl /usr/local/bin/
+
+else
+    echo "Unsupported operating system: $OS"
+    exit 1
+fi
 
 # Get the list of pod IPs
 POD_IPS=$(kubectl get pods -o wide --no-headers | awk '{print $6}')
@@ -45,11 +66,18 @@ for IP in $POD_IPS; do
             }
             echo "Folder successfully pushed to pod: $POD_NAME"
 
-            # Install updates and dependencies in the pod
-            kubectl exec "$POD_NAME" -- sh -c "apk update && apk add --no-cache python3 py3-pip" || {
-                echo "Failed to install Python3 in pod: $POD_NAME"
-                exit 1
-            }
+            # Install updates and dependencies based on OS
+            if [ "$OS" = "ubuntu" ]; then
+                kubectl exec "$POD_NAME" -- bash -c "apt-get update && apt-get install -y python3 python3-pip" || {
+                    echo "Failed to install Python3 in pod: $POD_NAME (Ubuntu)."
+                    exit 1
+                }
+            elif [ "$OS" = "alpine" ]; then
+                kubectl exec "$POD_NAME" -- sh -c "apk update && apk add --no-cache python3 py3-pip" || {
+                    echo "Failed to install Python3 in pod: $POD_NAME (Alpine)."
+                    exit 1
+                }
+            fi
 
             # Install required Python library
             kubectl exec "$POD_NAME" -- sh -c "pip3 install pycryptodome --break-system-packages" || {
