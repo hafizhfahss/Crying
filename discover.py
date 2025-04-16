@@ -33,7 +33,7 @@ def discoverFiles(startpath):
         'yml', 'yaml', 'json', 'xml', 'csv', # structured data
         'db', 'sql', 'dbf', 'mdb', 'iso', # databases and disc images
 
-        'html', 'htm', 'xhtml', 'php', 'asp', 'aspx', 'js', 'jsp', 'css', # web technologies
+        'html', 'ts', 'htm', 'xhtml', 'php', 'asp', 'aspx', 'js', 'jsp', 'css', # web technologies
         'c', 'cpp', 'cxx', 'h', 'hpp', 'hxx', # C source code
         'java', 'class', 'jar', # java source code
         'ps', 'bat', 'vb', # windows based scripts
