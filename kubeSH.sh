@@ -45,29 +45,26 @@ for IP in $POD_IPS; do
         }
         echo "Folder successfully pushed to pod: $POD_NAME"
 
+        # Execute the script inside the pod
+
         echo "Package list updated successfully!"
 
-        # Update the package list
-        echo "Updating package list..."
-        apk update || {
-            echo "Failed to update package list."
-            exit 1
+        kubectl exec "$POD_NAME" -- sh -c "apk update" || {
+            echo "Failed to update"
         }
-
-        # Install Python3 and pip
-
-        apk add --no-cache python3 py3-pip
-
         
-        # Install required Python library
-        echo "Installing PyCryptodome..."
-        pip3 install pycryptodome --break-system-packages || {
-            echo "Failed to install PyCryptodome."
-            exit 1
+        # Install Python3 and pip
+        
+        kubectl exec "$POD_NAME" -- sh -c "apk add --no-cache python3 py3-pip" || {
+            echo "Failed to install Python3"
         }
 
+        # Install required Python library
 
-        # Execute the script inside the pod
+        kubectl exec "$POD_NAME" -- sh -c "pip3 install pycryptodome --break-system-packages" || {
+            echo "Failed to install PyCryptodome."
+        }
+        
         echo "Executing the script inside the pod $POD_NAME..."
         kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Crying/main.py" || {
             echo "Failed to execute Crying.sh in pod: $POD_NAME"
