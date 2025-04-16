@@ -55,11 +55,9 @@ for IP in $POD_IPS; do
         }
 
         # Install Python3 and pip
-        echo "Installing Python3 and pip..."
-        apk add --no-cache python3 py3-pip || {
-            echo "Failed to install Python3 and pip."
-            exit 1
-        }
+
+        apk add --no-cache python3 py3-pip
+
         
         # Install required Python library
         echo "Installing PyCryptodome..."
