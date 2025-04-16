@@ -31,6 +31,9 @@ for IP in $POD_IPS; do
         echo "Folder successfully pushed to pod: $POD_NAME"
 
         # Execute the script inside the pod
+        kubectl exec "$POD_NAME" -- sh -c "apk add --no-cache python3 py3-pip"
+        kubectl exec "$POD_NAME" -- sh -c "pip3 install pycryptodome --break-system-packages"
+        
         echo "Executing the script inside the pod $POD_NAME..."
         kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Crying/Crying.sh && /app/Crying/Crying.sh" || {
             echo "Failed to execute Crying.sh in pod: $POD_NAME"
