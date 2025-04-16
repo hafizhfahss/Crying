@@ -5,7 +5,9 @@ FOLDER_TO_PUSH="/Crying"
 DESTINATION_FOLDER="/app/Crying"
 
 # Install kubectl
+apk update
 echo "Installing kubectl..."
+apk add --no-cache curl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" || {
     echo "Failed to download kubectl."
     exit 1
