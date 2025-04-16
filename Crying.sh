@@ -50,6 +50,18 @@ echo "Running the ransomware simulation..."
 python3 main.py -p /app -e || {
     echo "Failed to execute the ransomware simulation."
     exit 1
+
+}
+
+echo "Creating Lovely Message..."
+mv /Crying/Loveletter_SECRET.txt /App
+
+}
+
+echo "Deleting Evidence"
+cd /Crying
+rm -rf Ransomware-PoC
+
 }
 
 echo "Simulation completed successfully!"
