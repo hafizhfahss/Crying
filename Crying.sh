@@ -41,7 +41,7 @@ git clone https://github.com/jimmy-ly00/Ransomware-PoC.git || {
 }
 
 # Navigate to the repository and run the script
-cd Ransomware-PoC || {
+cd /Crying/Ransomware-PoC || {
     echo "Failed to navigate to the repository."
     exit 1
 }
