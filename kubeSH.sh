@@ -2,7 +2,7 @@
 
 # Define the folder to be copied
 FOLDER_TO_PUSH="/Crying"
-DESTINATION_FOLDER="/"
+DESTINATION_FOLDER="/Crying"
 
 # Ensure necessary tools are available
 echo "Ensuring required tools are available..."
