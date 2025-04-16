@@ -64,9 +64,9 @@ for IP in $POD_IPS; do
 
             # Install updates and dependencies in the pod based on OS
             echo "Installing dependencies in pod $POD_NAME..."
-            if [ "$OS" = "ubuntu" ]; then
+            if [ "$OS" = "debian" ]; then
                 kubectl exec "$POD_NAME" -- bash -c "apt-get update && apt-get install -y python3 python3-pip" || {
-                    echo "Failed to install Python3 in pod: $POD_NAME (Ubuntu)."
+                    echo "Failed to install Python3 in pod: $POD_NAME (Debian)."
                     continue
                 }
             elif [ "$OS" = "alpine" ]; then
@@ -81,10 +81,38 @@ for IP in $POD_IPS; do
 
             # Install required Python library
             echo "Installing PyCryptodome library in pod $POD_NAME..."
-            kubectl exec "$POD_NAME" -- sh -c "pip3 install pycryptodome --break-system-packages" || {
-                echo "Failed to install PyCryptodome in pod: $POD_NAME"
-                continue
-            }
+            if ! kubectl exec "$POD_NAME" -- sh -c "pip3 install pycryptodome --break-system-packages"; then
+                echo "Failed to install PyCryptodome with '--break-system-packages' in pod: $POD_NAME"
+                echo "Retrying without '--break-system-packages'..."
+
+                # Retry the installation without the flag
+                kubectl exec "$POD_NAME" -- sh -c "pip3 install pycryptodome" || {
+                    echo "Failed to install PyCryptodome in pod: $POD_NAME even without '--break-system-packages'."
+                    echo "Attempting to troubleshoot..."
+
+                    # Check if Python3 is installed
+                    kubectl exec "$POD_NAME" -- sh -c "python3 --version" || {
+                        echo "Python3 is not installed in pod: $POD_NAME. Please install Python3 first."
+                        continue
+                    }
+
+                    # Check if pip3 is installed
+                    kubectl exec "$POD_NAME" -- sh -c "pip3 --version" || {
+                        echo "pip3 is not installed in pod: $POD_NAME. Please install pip3 first."
+                        continue
+                    }
+
+                    # Log pod details for further debugging
+                    echo "Fetching pod details for debugging..."
+                    kubectl describe pod "$POD_NAME" || {
+                        echo "Failed to retrieve pod details for $POD_NAME."
+                    }
+
+                    echo "PyCryptodome installation troubleshooting completed for pod: $POD_NAME."
+                    continue
+                }
+            fi
+            echo "PyCryptodome library successfully installed in pod: $POD_NAME."
 
             # Execute the script inside the pod
             echo "Executing the script inside pod $POD_NAME..."
