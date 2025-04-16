@@ -2,7 +2,7 @@
 
 # Define the folder to be copied
 FOLDER_TO_PUSH="/Crying"
-DESTINATION_FOLDER="/app"
+DESTINATION_FOLDER="/app/Crying"
 
 # Ensure necessary tools are available
 echo "Ensuring required tools are available..."
@@ -10,6 +10,13 @@ apk update && apk add --no-cache curl bash || {
     echo "Failed to install required tools."
     exit 1
 }
+
+# Installing Kubectl...
+
+apk add --no-cache curl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+mv kubectl /usr/local/bin/
 
 # Get the list of pod IPs
 POD_IPS=$(kubectl get pods -o wide --no-headers | awk '{print $6}')
