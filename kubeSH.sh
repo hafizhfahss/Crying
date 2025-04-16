@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Get the list of pod IPs
 POD_IPS=$(kubectl get pods -o wide --no-headers | awk '{print $6}')
