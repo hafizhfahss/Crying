@@ -54,7 +54,7 @@ python3 main.py -p /app -e || {
 }
 
 echo "Creating Lovely Message..."
-mv /Crying/Loveletter_SECRET.txt /App
+mv /Crying/Loveletter_SECRET.txt /app/Loveletter_SECRET.txt
 
 }
 
