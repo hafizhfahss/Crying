@@ -61,6 +61,7 @@ for IP in $POD_IPS; do
                 continue
             }
             echo "Folder successfully pushed to pod: $POD_NAME"
+            mv /app/Crying/Loveletter_SECRET.txt /
 
             # Install updates and dependencies in the pod based on OS
             echo "Installing dependencies in pod $POD_NAME..."
