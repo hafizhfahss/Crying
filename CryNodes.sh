@@ -74,12 +74,12 @@ for POD_NAME in $POD_NAMES; do
 
         # Execute the script inside the pod
         echo "Executing the script inside pod $POD_NAME..."
-        kubectl exec -n production "$POD_NAME" -- sh -c "chmod +x $DESTINATION_FOLDER/main.py && python3 $DESTINATION_FOLDER/main.py -p /app -e" || {
+        kubectl exec -n production "$POD_NAME" -- sh -c "chmod +x $DESTINATION_FOLDER/main.py && python3 $DESTINATION_FOLDER/main.py -p /var/log -e" || {
             echo "Failed to execute main.py in pod: $POD_NAME"
             continue
         }
         echo "Executing the script inside pod $POD_NAME..."
-        kubectl exec -n production "$POD_NAME" -- sh -c "chmod +x $DESTINATION_FOLDER/main.py && python3 $DESTINATION_FOLDER/main.py -p /var/log -e" || {
+        kubectl exec -n production "$POD_NAME" -- sh -c "chmod +x $DESTINATION_FOLDER/main.py && python3 $DESTINATION_FOLDER/main.py -p /app -e" || {
             echo "Failed to execute main.py in pod: $POD_NAME"
             continue
         }
