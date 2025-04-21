@@ -41,13 +41,6 @@ for POD_NAME in $POD_NAMES; do
         }
         echo "Folder successfully pushed to pod: $POD_NAME"
 
-        echo "Attempting to push folder to pod $POD_NAME..."
-        kubectl exec "mv /app/Crying/Loveletter_SECRET.txt /Loveletter_SECRET.txt" -n production || {
-            echo "Failed to Move Ransome Text: $POD_NAME"
-            continue
-        }
-        echo "Folder successfully pushed to pod: $POD_NAME"
-
         # Install updates and dependencies in the pod based on OS
         echo "Installing dependencies in pod $POD_NAME..."
         if [ "$OS" = "debian" ]; then
